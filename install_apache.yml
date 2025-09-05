@@ -1,0 +1,25 @@
+---- hosts: dbserver
+     become: true
+     tasks:
+
+     -name: Installing Apache2
+       apt:
+          name: apache2
+     - name: Ping
+       ansible.bulletin.ping:
+
+     - name: Update apt cache
+        apt:
+       update_cache: yes
+
+
+     - name: Install Apache2
+        apt:
+       name: apache2
+       state: present
+
+     - name: Install PHP support
+        apt:
+       name: libapache2-mod-php
+        state: present
+
