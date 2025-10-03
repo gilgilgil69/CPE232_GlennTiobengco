@@ -1,0 +1,84 @@
+---
+- name: Update packages on all servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update Ubuntu servers
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+
+    - name: Update CentOS servers
+      yum:
+        name: "*"
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+- name: Install Apache and PHP on web servers
+  hosts: web_servers
+  become: yes
+  tasks:
+    - name: Install Apache (Ubuntu)
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install PHP (Ubuntu)
+      apt:
+        name: php
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install httpd (CentOS)
+      yum:
+        name: httpd
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Install PHP (CentOS)
+      yum:
+        name: php
+        state: present
+      when: ansible_os_family == "RedHat"
+
+- name: Start and enable httpd on CentOS
+  hosts: web_servers
+  become: yes
+  tasks:
+    - name: Ensure httpd is running
+      service:
+        name: httpd
+        state: started
+        enabled: true
+      when: ansible_os_family == "RedHat"
+
+- name: Install MariaDB on DB servers
+  hosts: db_servers
+  become: yes
+  tasks:
+    - name: Install MariaDB
+      package:
+        name: mariadb-server
+        state: present
+
+- name: Install NFS on file servers
+  hosts: file_servers
+  become: yes
+  tasks:
+    - name: Install NFS (Ubuntu)
+      apt:
+        name: nfs-kernel-server
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install NFS (CentOS)
+      yum:
+        name: nfs-utils
+        state: present
+      when: ansible_os_family == "RedHat"
+
+
+
+
