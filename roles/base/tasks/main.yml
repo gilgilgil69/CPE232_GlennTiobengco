@@ -1,0 +1,19 @@
+---
+- name: Update Ubuntu servers
+  apt:
+    update_cache: yes
+    upgrade: dist
+    force_apt_get: yes
+    autoclean: yes
+    autoremove: yes
+  when: ansible_os_family == "Debian"
+
+- name: Update CentOS servers
+  yum:
+    name: "*"
+    state: latest
+  when: ansible_os_family == "RedHat"
+
+
+
+

@@ -1,0 +1,8 @@
+---
+- name: Install MariaDB
+  package:
+    name: mariadb-server
+    state: present
+
+
+

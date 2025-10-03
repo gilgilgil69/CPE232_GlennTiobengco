@@ -1,0 +1,42 @@
+---
+- name: Install Apache (Ubuntu)
+  apt:
+    name: apache2
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install PHP (Ubuntu)
+  apt:
+    name: php
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install httpd (CentOS)
+  yum:
+    name: httpd
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install PHP (CentOS)
+  yum:
+    name: php
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Copy default index.html
+  copy:
+    src: files/default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Ensure httpd is running (CentOS)
+  service:
+    name: httpd
+    state: started
+    enabled: true
+  when: ansible_os_family == "RedHat"
+
+
+

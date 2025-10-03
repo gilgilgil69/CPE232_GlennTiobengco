@@ -1,99 +1,28 @@
 ---
-- name: Update packages on all servers
-  hosts: all
-  become: yes
-  tasks:
-    - name: Update Ubuntu servers
-      apt:
-        update_cache: yes
-        upgrade: dist
-        force_apt_get: yes
-        autoclean: yes
-        autoremove: yes
-      when: ansible_os_family == "Debian"
+- hosts: all
+  become: true
+  roles:
+    - base
 
-    - name: Update CentOS servers
-      yum:
-        name: "*"
-        state: latest
-      when: ansible_os_family == "RedHat"
+- hosts: workstations
+  become: true
+  roles:
+    - workstations
 
-- name: Install Apache and PHP on web servers
-  hosts: web_servers
-  become: yes
-  tasks:
-    - name: Install Apache (Ubuntu)
-      apt:
-        name: apache2
-        state: present
-      when: ansible_os_family == "Debian"
+- hosts: web_servers
+  become: true
+  roles:
+    - web_servers
 
-    - name: Install PHP (Ubuntu)
-      apt:
-        name: php
-        state: present
-      when: ansible_os_family == "Debian"
+- hosts: db_servers
+  become: true
+  roles:
+    - db_servers
 
-    - name: Install httpd (CentOS)
-      yum:
-        name: httpd
-        state: present
-      when: ansible_os_family == "RedHat"
-
-    - name: Install PHP (CentOS)
-      yum:
-        name: php
-        state: present
-      when: ansible_os_family == "RedHat"
-
-- name: Copy default html file for site
-  hosts: web_servers
-  become: yes
-  tags: apache, apache2, httpd
-  tasks:
-    - name: Copy default index.html
-      copy:
-        src: files/default_site.html
-        dest: /var/www/html/index.html
-        owner: root
-        group: root
-        mode: 0644
-
-- name: Start and enable httpd on CentOS
-  hosts: web_servers
-  become: yes
-  tasks:
-    - name: Ensure httpd is running
-      service:
-        name: httpd
-        state: started
-        enabled: true
-      when: ansible_os_family == "RedHat"
-
-- name: Install MariaDB on DB servers
-  hosts: db_servers
-  become: yes
-  tasks:
-    - name: Install MariaDB
-      package:
-        name: mariadb-server
-        state: present
-
-- name: Install NFS on file servers
-  hosts: file_servers
-  become: yes
-  tasks:
-    - name: Install NFS (Ubuntu)
-      apt:
-        name: nfs-kernel-server
-        state: present
-      when: ansible_os_family == "Debian"
-
-    - name: Install NFS (CentOS)
-      yum:
-        name: nfs-utils
-        state: present
-      when: ansible_os_family == "RedHat"
+- hosts: file_servers
+  become: true
+  roles:
+    - file_servers
 
 
 
