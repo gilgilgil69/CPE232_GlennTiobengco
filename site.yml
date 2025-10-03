@@ -7,6 +7,9 @@
       apt:
         update_cache: yes
         upgrade: dist
+        force_apt_get: yes
+        autoclean: yes
+        autoremove: yes
       when: ansible_os_family == "Debian"
 
     - name: Update CentOS servers
@@ -43,6 +46,19 @@
         state: present
       when: ansible_os_family == "RedHat"
 
+- name: Copy default html file for site
+  hosts: web_servers
+  become: yes
+  tags: apache, apache2, httpd
+  tasks:
+    - name: Copy default index.html
+      copy:
+        src: files/default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+
 - name: Start and enable httpd on CentOS
   hosts: web_servers
   become: yes
@@ -78,7 +94,6 @@
         name: nfs-utils
         state: present
       when: ansible_os_family == "RedHat"
-
 
 
 
